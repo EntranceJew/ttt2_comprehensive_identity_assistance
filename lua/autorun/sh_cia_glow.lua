@@ -30,6 +30,11 @@ CIA_GLOW = CIA_GLOW or {}
 -- end
 
 -- @TODO make all these functions hooks from the basegame to share logic
+
+CIA_GLOW.IsSpectatorGhost = function(ply)
+	return SpecDM and ply.IsGhost and ply:IsGhost()
+end
+
 CIA_GLOW.ShouldDrawOverheadIcon = function(ply)
 	local client = LocalPlayer()
 	local rd = ply:GetSubRoleData()
@@ -160,10 +165,10 @@ CIA_GLOW.PreDrawHalos = function()
 		if (
 			ply == l_ply
 			or not ply:Alive()
+			or CIA_GLOW.IsSpectatorGhost(ply)
 		) then
 			esc = ESC_DRAW_NONE
 		end
-
 
 		local draw_mode = NULL
 		if esc == ESC_DRAW_ALWAYS then
