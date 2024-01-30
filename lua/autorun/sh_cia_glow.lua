@@ -86,8 +86,10 @@ CIA_GLOW.last_peeped_entity = nil
 
 CIA_GLOW.PreDrawHalos = function()
 	local l_ply = LocalPlayer()
+	local l_ply_role = l_ply:GetRole()
 	local plys = player.GetAll()
 	local peeped_entity = l_ply:GetEyeTrace().Entity
+	local round_state = GetRoundState()
 
 	for i = 1, #plys do
 		local desired_color = COLOR_SLATEGRAY
@@ -106,7 +108,8 @@ CIA_GLOW.PreDrawHalos = function()
 
 
 		-- IS ROLE VISIBLE?
-		conditions.detective_check = (ply:IsInTeam(l_ply) and not ply:GetDetective()) or (ply:GetRole() == l_ply:GetRole())
+		conditions.round_over = round_state == ROUND_POST
+		conditions.detective_check = (ply:IsInTeam(l_ply) and not ply:GetDetective()) or (ply:GetRole() == l_ply_role)
 		-- should_draw
 		-- ply:IsSpecial()
 		-- ply:Alive()
@@ -164,8 +167,9 @@ CIA_GLOW.PreDrawHalos = function()
 		-- ESC_DRAW_NONE
 		if (
 			ply == l_ply
-			or not ply:Alive()
 			or CIA_GLOW.IsSpectatorGhost(ply)
+			or (round_state == ROUND_ACTIVE and not ply:IsTerror())
+			or not ply:Alive()
 		) then
 			esc = ESC_DRAW_NONE
 		end
